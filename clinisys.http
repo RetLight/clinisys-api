@@ -1,0 +1,327 @@
+### Clinisys API - Testing con REST Client
+### Configuración base
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### Variables para IDs (actualizar después de crear recursos)
+@citaId = 
+@atencionId = 
+@procedimientoId = 
+@pacienteId = 550e8400-e29b-41d4-a716-446655440000
+@medicoId = 550e8400-e29b-41d4-a716-446655440001
+@insumoId = 550e8400-e29b-41d4-a716-446655440002
+
+---
+
+### ===============================================
+### SECCIÓN: CITAS
+### ===============================================
+
+### 1. Crear una nueva cita
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-12-20T14:30:00Z",
+  "motivo": "Consulta general",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### 2. Listar todas las citas
+GET {{baseUrl}}/citas
+
+###
+
+### 3. Obtener una cita por ID
+GET {{baseUrl}}/citas/{{citaId}}
+
+###
+
+### 4. Actualizar una cita
+PATCH {{baseUrl}}/citas/{{citaId}}
+Content-Type: {{contentType}}
+
+{
+  "motivo": "Consulta urgente",
+  "estado": "confirmada"
+}
+
+###
+
+### 5. Eliminar una cita
+DELETE {{baseUrl}}/citas/{{citaId}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: ATENCIONES MÉDICAS
+### ===============================================
+
+### 6. Crear una nueva atención médica
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "{{citaId}}",
+  "diagnostico": "Gripe común",
+  "fecha": "2025-12-20T14:45:00Z",
+  "observaciones": {
+    "presion": "120/80",
+    "temperatura": 37.5,
+    "notas": "Paciente presenta síntomas leves"
+  }
+}
+
+###
+
+### 7. Listar todas las atenciones
+GET {{baseUrl}}/atenciones
+
+###
+
+### 8. Obtener una atención por ID
+GET {{baseUrl}}/atenciones/{{atencionId}}
+
+###
+
+### 9. Actualizar una atención
+PATCH {{baseUrl}}/atenciones/{{atencionId}}
+Content-Type: {{contentType}}
+
+{
+  "diagnostico": "Gripe común - mejorado",
+  "observaciones": {
+    "presion": "118/78",
+    "temperatura": 37.2,
+    "notas": "Síntomas disminuidos"
+  }
+}
+
+###
+
+### 10. Eliminar una atención
+DELETE {{baseUrl}}/atenciones/{{atencionId}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: PROCEDIMIENTOS
+### ===============================================
+
+### 11. Crear un nuevo procedimiento
+POST {{baseUrl}}/procedimientos
+Content-Type: {{contentType}}
+
+{
+  "atencionId": "{{atencionId}}",
+  "descripcion": "Inyección de antibiótico",
+  "insumoId": "{{insumoId}}",
+  "cantidad": 2
+}
+
+###
+
+### 12. Listar todos los procedimientos
+GET {{baseUrl}}/procedimientos
+
+###
+
+### 13. Obtener un procedimiento por ID
+GET {{baseUrl}}/procedimientos/{{procedimientoId}}
+
+###
+
+### 14. Actualizar un procedimiento
+PATCH {{baseUrl}}/procedimientos/{{procedimientoId}}
+Content-Type: {{contentType}}
+
+{
+  "descripcion": "Inyección de antibiótico - dosis aumentada",
+  "cantidad": 3
+}
+
+###
+
+### 15. Eliminar un procedimiento
+DELETE {{baseUrl}}/procedimientos/{{procedimientoId}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: TESTS DE VALIDACIÓN
+### ===============================================
+
+### TEST 1: Crear cita con fecha pasada (DEBE FALLAR)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2020-12-20T14:30:00Z",
+  "motivo": "Consulta general",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### TEST 2: Crear cita fuera de horario (DEBE FALLAR - hora 22:00)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-12-20T22:30:00Z",
+  "motivo": "Consulta general",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### TEST 3: Crear cita con motivo muy corto (DEBE FALLAR)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-12-20T14:30:00Z",
+  "motivo": "ab",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### TEST 4: Crear cita con paciente inválido (DEBE FALLAR)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-12-20T14:30:00Z",
+  "motivo": "Consulta general",
+  "pacienteId": "00000000-0000-0000-0000-000000000000",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### TEST 5: Crear atención con cita no existente (DEBE FALLAR)
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "00000000-0000-0000-0000-000000000000",
+  "diagnostico": "Gripe común",
+  "fecha": "2025-12-20T14:45:00Z",
+  "observaciones": {}
+}
+
+###
+
+### TEST 6: Crear atención con fecha anterior a cita (DEBE FALLAR)
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "{{citaId}}",
+  "diagnostico": "Gripe común",
+  "fecha": "2025-12-10T14:45:00Z",
+  "observaciones": {}
+}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: FLUJO COMPLETO
+### ===============================================
+
+### PASO 1: Crear un paciente (si es necesario)
+### PASO 2: Crear un médico (si es necesario)
+
+### PASO 3: Crear una cita
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-12-21T10:00:00Z",
+  "motivo": "Revisión de rutina",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### PASO 4: Crear una atención para esa cita
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "{{citaId}}",
+  "diagnostico": "Todo normal",
+  "fecha": "2025-12-21T10:15:00Z",
+  "observaciones": {
+    "peso": 70,
+    "altura": 180,
+    "imc": 21.6
+  }
+}
+
+###
+
+### PASO 5: Registrar un procedimiento en esa atención
+POST {{baseUrl}}/procedimientos
+Content-Type: {{contentType}}
+
+{
+  "atencionId": "{{atencionId}}",
+  "descripcion": "Toma de muestra de sangre",
+  "insumoId": "{{insumoId}}",
+  "cantidad": 1
+}
+
+###
+
+### PASO 6: Confirmar que el procedimiento se creó
+GET {{baseUrl}}/procedimientos/{{procedimientoId}}
+
+###
+
+---
+
+### ===============================================
+### REFERENCIAS Y NOTAS
+### ===============================================
+
+### Para usar este archivo en VS Code:
+### 1. Instala la extensión "REST Client" (Huachao Mao)
+### 2. Abre este archivo
+### 3. Haz clic en "Send Request" sobre cualquier request
+### 4. Actualiza las variables (@citaId, @atencionId, etc) con los valores que obtengas
+
+### Estructura de respuestas exitosas:
+### - 200 OK: GET, PATCH, DELETE exitosos
+### - 201 Created: POST exitoso
+### - 400 Bad Request: Validación fallida
+### - 404 Not Found: Recurso no existe
+### - 409 Conflict: Conflicto de datos (ej: dos citas al mismo tiempo)
+
+### Variables de entorno útiles:
+### - @baseUrl: URL base del servidor
+### - @citaId: ID de la cita creada (cópiar del response)
+### - @atencionId: ID de la atención creada
+### - @procedimientoId: ID del procedimiento creado
+
+### Tips:
+### - Los comentarios con ### son títulos de secciones
+### - Los comentarios con // dentro de JSON son ignorados
+### - Puedes usar Ctrl+Shift+P > "REST Client: Send Request" 
+### - Presiona "Send Request" encima de cada petición
