@@ -21,15 +21,11 @@ import { ProcedimientosService } from './procedimientos/services/procedimientos.
     ProcedimientosController,
   ],
   providers: [
-    PrismaService,      // compartido en todo M1
+    PrismaService, // compartido en todo M1
     CitasService,
     AtencionesService,
     ProcedimientosService,
   ],
-  exports: [
-    CitasService,
-    AtencionesService,
-    ProcedimientosService,
-  ],
+  exports: [CitasService, AtencionesService, ProcedimientosService],
 })
 export class M1HealthModule {}

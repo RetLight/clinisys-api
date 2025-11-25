@@ -1,4 +1,10 @@
-import { IsUUID, IsString, IsOptional, IsDateString, MinLength } from 'class-validator';
+import {
+  IsUUID,
+  IsString,
+  IsOptional,
+  IsDateString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateAtencionDto {
   @IsUUID()

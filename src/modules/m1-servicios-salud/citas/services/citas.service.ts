@@ -32,15 +32,27 @@ export class CitasService {
     }
   }
 
-  private async ensurePacienteYMedicoExisten(pacienteId: string, medicoId: string) {
-    const paciente = await this.prisma.paciente.findUnique({ where: { id: pacienteId } });
+  private async ensurePacienteYMedicoExisten(
+    pacienteId: string,
+    medicoId: string,
+  ) {
+    const paciente = await this.prisma.paciente.findUnique({
+      where: { id: pacienteId },
+    });
     if (!paciente) throw new NotFoundException('Paciente no encontrado.');
 
-    const medico = await this.prisma.medico.findUnique({ where: { id: medicoId } });
+    const medico = await this.prisma.medico.findUnique({
+      where: { id: medicoId },
+    });
     if (!medico) throw new NotFoundException('Medico no encontrado.');
   }
 
-  private async ensureDisponibilidad(medicoId: string, pacienteId: string, fecha: Date, ignoreId?: string) {
+  private async ensureDisponibilidad(
+    medicoId: string,
+    pacienteId: string,
+    fecha: Date,
+    ignoreId?: string,
+  ) {
     const conflictoMedico = await this.prisma.cita.findFirst({
       where: {
         medico_id: medicoId,
@@ -49,7 +61,10 @@ export class CitasService {
       },
     });
 
-    if (conflictoMedico) throw new ConflictException('El médico ya tiene una cita en ese horario.');
+    if (conflictoMedico)
+      throw new ConflictException(
+        'El médico ya tiene una cita en ese horario.',
+      );
 
     const conflictoPaciente = await this.prisma.cita.findFirst({
       where: {
@@ -60,7 +75,9 @@ export class CitasService {
     });
 
     if (conflictoPaciente)
-      throw new ConflictException('El paciente ya tiene una cita en ese horario.');
+      throw new ConflictException(
+        'El paciente ya tiene una cita en ese horario.',
+      );
   }
 
   // -----------------------------

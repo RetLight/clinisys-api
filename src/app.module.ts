@@ -15,6 +15,8 @@ import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
 import { M3UsuariosSeguridadModule } from './modules/m3-usuarios-seguridad/m3-usuarios-seguridad.module';
 // luego añadirás M1, M2, M4
 import { M1HealthModule } from './modules/m1-servicios-salud/m1-health.module';
+
+import { M2PurchasesModule } from './modules/m2-compras/m2-purchases.module';
 // (luego añadirás M2, M3, M4)
 
 @Module({
@@ -23,6 +25,7 @@ import { M1HealthModule } from './modules/m1-servicios-salud/m1-health.module';
     PrismaModule,
     M3UsuariosSeguridadModule,
     M1HealthModule,
+    M2PurchasesModule,
   ],
 })
 export class AppModule {}

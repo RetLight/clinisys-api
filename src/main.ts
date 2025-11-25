@@ -9,9 +9,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,     // Quita campos extra
+      whitelist: true, // Quita campos extra
       forbidNonWhitelisted: true, // Rechaza campos no permitidos
-      transform: true,     // Transforma tipos automáticamente
+      transform: true, // Transforma tipos automáticamente
       transformOptions: {
         enableImplicitConversion: true,
       },
@@ -21,6 +21,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(3000);
-  
 }
-bootstrap();
+
+void bootstrap();

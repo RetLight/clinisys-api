@@ -3,13 +3,32 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
 
-### Variables para IDs (actualizar después de crear recursos)
-@citaId = 
-@atencionId = 
-@procedimientoId = 
-@pacienteId = 550e8400-e29b-41d4-a716-446655440000
-@medicoId = 550e8400-e29b-41d4-a716-446655440001
-@insumoId = 550e8400-e29b-41d4-a716-446655440002
+### ===============================================
+### VARIABLES GLOBALES (Actualizar después de crear recursos)
+### ===============================================
+
+### M3 - Usuarios y Seguridad (IDs de ejemplo - actualizar con valores reales)
+@userAdminId = 550e8400-e29b-41d4-a716-446655440100
+@userRecepcionistaId = 550e8400-e29b-41d4-a716-446655440101
+@userCompradorId = 550e8400-e29b-41d4-a716-446655440102
+
+### M1 - Servicios de Salud (IDs de ejemplo - actualizar con valores reales)
+@pacienteId = 7d1d02a7-ee01-4d7e-8f54-452902a3e843
+@medicoId = 986622ae-1479-4d75-b3fe-2a74828d7411
+@citaId = 550e8400-e29b-41d4-a716-446655440202
+@atencionId = 550e8400-e29b-41d4-a716-446655440203
+@procedimientoId = 550e8400-e29b-41d4-a716-446655440204
+
+### M4 - Inventario (IDs de ejemplo - actualizar con valores reales)
+@insumoId1 = 550e8400-e29b-41d4-a716-446655440300
+@insumoId2 = 550e8400-e29b-41d4-a716-446655440301
+@insumoId3 = 550e8400-e29b-41d4-a716-446655440302
+
+### M2 - Compras (IDs de ejemplo - actualizar con valores reales)
+@proveedorId = 550e8400-e29b-41d4-a716-446655440400
+@solicitudId = 550e8400-e29b-41d4-a716-446655440401
+@ordenId = 550e8400-e29b-41d4-a716-446655440402
+@recepcionId = 550e8400-e29b-41d4-a716-446655440403 
 
 ---
 
@@ -122,7 +141,7 @@ Content-Type: {{contentType}}
 {
   "atencionId": "{{atencionId}}",
   "descripcion": "Inyección de antibiótico",
-  "insumoId": "{{insumoId}}",
+  "insumoId": "{{insumoId2}}",
   "cantidad": 2
 }
 
@@ -284,7 +303,7 @@ Content-Type: {{contentType}}
 {
   "atencionId": "{{atencionId}}",
   "descripcion": "Toma de muestra de sangre",
-  "insumoId": "{{insumoId}}",
+  "insumoId": "{{insumoId2}}",
   "cantidad": 1
 }
 
@@ -320,8 +339,786 @@ GET {{baseUrl}}/procedimientos/{{procedimientoId}}
 ### - @atencionId: ID de la atención creada
 ### - @procedimientoId: ID del procedimiento creado
 
+### ===============================================
+### REFERENCIAS Y NOTAS
+### ===============================================
+
+### Para usar este archivo en VS Code:
+### 1. Instala la extensión "REST Client" (Huachao Mao)
+### 2. Abre este archivo
+### 3. Haz clic en "Send Request" sobre cualquier request
+### 4. Actualiza las variables (@citaId, @atencionId, etc) con los valores que obtengas
+
+### Estructura de respuestas exitosas:
+### - 200 OK: GET, PATCH, DELETE exitosos
+### - 201 Created: POST exitoso
+### - 400 Bad Request: Validación fallida
+### - 404 Not Found: Recurso no existe
+### - 409 Conflict: Conflicto de datos (ej: dos citas al mismo tiempo)
+
+### Variables de entorno útiles:
+### - @baseUrl: URL base del servidor
+### - @citaId: ID de la cita creada (cópiar del response)
+### - @atencionId: ID de la atención creada
+### - @procedimientoId: ID del procedimiento creado
+
 ### Tips:
 ### - Los comentarios con ### son títulos de secciones
 ### - Los comentarios con // dentro de JSON son ignorados
 ### - Puedes usar Ctrl+Shift+P > "REST Client: Send Request" 
 ### - Presiona "Send Request" encima de cada petición
+
+---
+
+### ===============================================
+### SECCIÓN M1: SERVICIOS DE SALUD (COMPLETO)
+### ===============================================
+
+### M1.1 - PACIENTES
+
+### M1.1.1 Crear paciente
+POST {{baseUrl}}/pacientes
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Juan Perez",
+  "dni": "100100100",
+  "fechaNacimiento": "1985-06-15"
+}
+
+###
+
+### M1.1.2 Listar todos los pacientes
+GET {{baseUrl}}/pacientes
+
+###
+
+### M1.1.3 Obtener paciente por ID
+GET {{baseUrl}}/pacientes/{{pacienteId}}
+
+###
+
+### M1.1.4 Actualizar paciente
+PATCH {{baseUrl}}/pacientes/{{pacienteId}}
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Juan Perez Martinez"
+}
+
+###
+
+---
+
+### M1.2 - MÉDICOS
+
+### M1.2.1 Crear médico
+POST {{baseUrl}}/medicos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Dr. Andres Diaz",
+  "especialidad": "Cardiología"
+}
+
+###
+
+### M1.2.2 Listar todos los médicos
+GET {{baseUrl}}/medicos
+
+###
+
+### M1.2.3 Obtener médico por ID
+GET {{baseUrl}}/medicos/{{medicoId}}
+
+###
+
+### M1.2.4 Actualizar médico
+PATCH {{baseUrl}}/medicos/{{medicoId}}
+Content-Type: {{contentType}}
+
+{
+  "especialidad": "Cardiología General"
+}
+
+###
+
+---
+
+### M1.3 - CITAS
+
+### M1.3.1 Crear cita (COMPLETADA)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-11-26T10:00:00Z",
+  "motivo": "Chequeo de rutina",
+  "estado": "COMPLETADA",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### M1.3.2 Listar todas las citas
+GET {{baseUrl}}/citas
+
+###
+
+### M1.3.3 Obtener cita por ID
+GET {{baseUrl}}/citas/{{citaId}}
+
+###
+
+### M1.3.4 Actualizar estado de cita
+PATCH {{baseUrl}}/citas/{{citaId}}
+Content-Type: {{contentType}}
+
+{
+  "estado": "COMPLETADA",
+  "motivo": "Chequeo de rutina - completado"
+}
+
+###
+
+### M1.3.5 Eliminar cita
+DELETE {{baseUrl}}/citas/{{citaId}}
+
+###
+
+---
+
+### M1.4 - ATENCIONES MÉDICAS
+
+### M1.4.1 Crear atención médica
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "{{citaId}}",
+  "diagnostico": "Hipertensión Arterial",
+  "fecha": "2025-11-26T10:30:00Z",
+  "observaciones": {
+    "indicaciones": "Dieta baja en sodio, ejercicios.",
+    "prescripcion": "Amlo 5mg"
+  }
+}
+
+###
+
+### M1.4.2 Listar todas las atenciones
+GET {{baseUrl}}/atenciones
+
+###
+
+### M1.4.3 Obtener atención por ID
+GET {{baseUrl}}/atenciones/{{atencionId}}
+
+###
+
+### M1.4.4 Actualizar atención
+PATCH {{baseUrl}}/atenciones/{{atencionId}}
+Content-Type: {{contentType}}
+
+{
+  "diagnostico": "Hipertensión Arterial - controlada",
+  "observaciones": {
+    "indicaciones": "Continuar con dieta y ejercicios",
+    "prescripcion": "Amlo 10mg - dosis aumentada"
+  }
+}
+
+###
+
+### M1.4.5 Eliminar atención
+DELETE {{baseUrl}}/atenciones/{{atencionId}}
+
+###
+
+---
+
+### M1.5 - PROCEDIMIENTOS
+
+### M1.5.1 Crear procedimiento (Toma de muestra de sangre)
+POST {{baseUrl}}/procedimientos
+Content-Type: {{contentType}}
+
+{
+  "atencionId": "{{atencionId}}",
+  "descripcion": "Toma de muestra de sangre",
+  "insumoId": "{{insumoId2}}",
+  "cantidad": 1
+}
+
+###
+
+### M1.5.2 Listar todos los procedimientos
+GET {{baseUrl}}/procedimientos
+
+###
+
+### M1.5.3 Obtener procedimiento por ID
+GET {{baseUrl}}/procedimientos/{{procedimientoId}}
+
+###
+
+### M1.5.4 Actualizar procedimiento
+PATCH {{baseUrl}}/procedimientos/{{procedimientoId}}
+Content-Type: {{contentType}}
+
+{
+  "descripcion": "Toma de muestra de sangre - completado",
+  "cantidad": 1
+}
+
+###
+
+### M1.5.5 Eliminar procedimiento
+DELETE {{baseUrl}}/procedimientos/{{procedimientoId}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN M4: INVENTARIO MÉDICO
+### ===============================================
+
+### M4.1 - INSUMOS
+
+### M4.1.1 Crear insumo 1: Alcohol Isopropílico
+POST {{baseUrl}}/insumos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Alcohol Isopropílico",
+  "categoria": "Antisépticos",
+  "unidadMedida": "Mililitros",
+  "stockActual": 1000,
+  "stockMinimo": 50
+}
+
+###
+
+### M4.1.2 Crear insumo 2: Jeringa 5ml
+POST {{baseUrl}}/insumos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Jeringa 5ml",
+  "categoria": "Material Descartable",
+  "unidadMedida": "Unidad",
+  "stockActual": 500,
+  "stockMinimo": 100
+}
+
+###
+
+### M4.1.3 Crear insumo 3: Pastilla Amlo 5mg
+POST {{baseUrl}}/insumos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Pastilla Amlo 5mg",
+  "categoria": "Medicamentos",
+  "unidadMedida": "Unidad",
+  "stockActual": 2000,
+  "stockMinimo": 500
+}
+
+###
+
+### M4.1.4 Listar todos los insumos
+GET {{baseUrl}}/insumos
+
+###
+
+### M4.1.5 Obtener insumo por ID
+GET {{baseUrl}}/insumos/{{insumoId1}}
+
+###
+
+### M4.1.6 Actualizar insumo
+PATCH {{baseUrl}}/insumos/{{insumoId1}}
+Content-Type: {{contentType}}
+
+{
+  "stockActual": 1500,
+  "stockMinimo": 100
+}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN M2: COMPRAS (FLUJO COMPLETO)
+### ===============================================
+
+### M2.1 - PROVEEDORES
+
+### M2.1.1 Crear proveedor
+POST {{baseUrl}}/proveedores
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Distribuidora GlobalMed",
+  "ruc": "300300300",
+  "telefono": "1234567",
+  "direccion": "Av. Central 101"
+}
+
+###
+
+### M2.1.2 Listar todos los proveedores
+GET {{baseUrl}}/proveedores
+
+###
+
+### M2.1.3 Obtener proveedor por ID
+GET {{baseUrl}}/proveedores/{{proveedorId}}
+
+###
+
+### M2.1.4 Actualizar proveedor
+PATCH {{baseUrl}}/proveedores/{{proveedorId}}
+Content-Type: {{contentType}}
+
+{
+  "telefono": "9876543",
+  "direccion": "Av. Central 505"
+}
+
+###
+
+---
+
+### M2.2 - SOLICITUDES DE COMPRA
+
+### M2.2.1 Crear solicitud de compra (por Marco Comprador)
+POST {{baseUrl}}/solicitudes-compra
+Content-Type: {{contentType}}
+
+{
+  "creadoPor": "{{userCompradorId}}",
+  "area": "Farmacia",
+  "items": [
+    {
+      "insumoId": "{{insumoId1}}",
+      "cantidad": 500
+    }
+  ]
+}
+
+###
+
+### M2.2.2 Listar todas las solicitudes
+GET {{baseUrl}}/solicitudes-compra
+
+###
+
+### M2.2.3 Obtener solicitud por ID
+GET {{baseUrl}}/solicitudes-compra/{{solicitudId}}
+
+###
+
+### M2.2.4 Actualizar estado de solicitud
+PATCH {{baseUrl}}/solicitudes-compra/{{solicitudId}}
+Content-Type: {{contentType}}
+
+{
+  "estado": "APROBADA"
+}
+
+###
+
+---
+
+### M2.3 - SOLICITUD COMPRA ITEMS
+
+### M2.3.1 Obtener items de solicitud (se crean al crear la solicitud)
+GET {{baseUrl}}/solicitudes-compra/{{solicitudId}}/items
+
+###
+
+### M2.3.2 Listar todas las solicitudes (para verificar items)
+GET {{baseUrl}}/solicitudes-compra
+
+###
+
+---
+
+### M2.4 - ÓRDENES DE COMPRA
+
+### M2.4.1 Crear orden de compra (desde solicitud)
+POST {{baseUrl}}/ordenes-compra
+Content-Type: {{contentType}}
+
+{
+  "proveedorId": "{{proveedorId}}",
+  "solicitudId": "{{solicitudId}}"
+}
+
+###
+
+### M2.4.2 Listar todas las órdenes
+GET {{baseUrl}}/ordenes-compra
+
+###
+
+### M2.4.3 Obtener orden por ID
+GET {{baseUrl}}/ordenes-compra/{{ordenId}}
+
+###
+
+### M2.4.4 Actualizar estado de orden
+PATCH {{baseUrl}}/ordenes-compra/{{ordenId}}
+Content-Type: {{contentType}}
+
+{
+  "estado": "PENDIENTE"
+}
+
+###
+
+---
+
+### M2.5 - ORDEN COMPRA ITEMS
+
+### M2.5.1 Listar items de orden (se crean al generar la orden desde solicitud)
+GET {{baseUrl}}/ordenes-compra/{{ordenId}}/items
+
+###
+
+### M2.5.2 Obtener detalles completos de orden
+GET {{baseUrl}}/ordenes-compra/{{ordenId}}
+
+###
+
+---
+
+### M2.6 - RECEPCIONES
+
+### M2.6.1 Crear recepción (por Carlos Administrador)
+POST {{baseUrl}}/recepciones
+Content-Type: {{contentType}}
+
+{
+  "ordenId": "{{ordenId}}",
+  "responsableId": "{{userAdminId}}",
+  "detalles": [
+    {
+      "insumoId": "{{insumoId1}}",
+      "cantidadRecibida": 500
+    }
+  ]
+}
+
+###
+
+### M2.6.2 Listar todas las recepciones
+GET {{baseUrl}}/recepciones
+
+###
+
+### M2.6.3 Obtener recepción por ID
+GET {{baseUrl}}/recepciones/{{recepcionId}}
+
+###
+
+### M2.6.4 Actualizar recepción
+PATCH {{baseUrl}}/recepciones/{{recepcionId}}
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-11-25T11:30:00Z"
+}
+
+###
+
+---
+
+### M2.7 - RECEPCIÓN DETALLE
+
+### M2.7.1 Listar detalles de recepción (se crean al crear la recepción)
+GET {{baseUrl}}/recepciones/{{recepcionId}}/detalles
+
+###
+
+### M2.7.2 Verificar que el stock fue actualizado
+GET {{baseUrl}}/insumos/{{insumoId1}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: FLUJOS COMPLETOS E2E
+### ===============================================
+
+### FLUJO M1 COMPLETO: Paciente → Cita → Atención → Procedimiento
+
+### Paso 1: Crear Paciente
+POST {{baseUrl}}/pacientes
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Juan Perez",
+  "dni": "100100100",
+  "fechaNacimiento": "1985-06-15"
+}
+
+###
+
+### Paso 2: Crear Médico
+POST {{baseUrl}}/medicos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Dr. Andres Diaz",
+  "especialidad": "Cardiología"
+}
+
+###
+
+### Paso 3: Crear Cita (copiar IDs del paso 1 y 2)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-11-26T10:00:00Z",
+  "motivo": "Chequeo de rutina",
+  "estado": "COMPLETADA",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### Paso 4: Crear Atención Médica (copiar ID del paso 3)
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "{{citaId}}",
+  "diagnostico": "Hipertensión Arterial",
+  "fecha": "2025-11-26T10:30:00Z",
+  "observaciones": {
+    "indicaciones": "Dieta baja en sodio, ejercicios.",
+    "prescripcion": "Amlo 5mg"
+  }
+}
+
+###
+
+### Paso 5: Crear Procedimiento (copiar IDs del paso 4 e insumo)
+POST {{baseUrl}}/procedimientos
+Content-Type: {{contentType}}
+
+{
+  "atencionId": "{{atencionId}}",
+  "descripcion": "Toma de muestra de sangre",
+  "insumoId": "{{insumoId2}}",
+  "cantidad": 1
+}
+
+###
+
+---
+
+### FLUJO M2 COMPLETO: Solicitud → Orden → Recepción
+
+### Paso 1: Crear Proveedor
+POST {{baseUrl}}/proveedores
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Distribuidora GlobalMed",
+  "ruc": "300300300",
+  "telefono": "1234567",
+  "direccion": "Av. Central 101"
+}
+
+###
+
+### Paso 2: Crear Insumo (Alcohol Isopropílico)
+POST {{baseUrl}}/insumos
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Alcohol Isopropílico",
+  "categoria": "Antisépticos",
+  "unidadMedida": "Mililitros",
+  "stockActual": 1000,
+  "stockMinimo": 50
+}
+
+###
+
+### Paso 3: Crear Solicitud de Compra
+POST {{baseUrl}}/solicitudes-compra
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2025-11-20T09:00:00Z",
+  "estado": "APROBADA",
+  "area": "Farmacia",
+  "creadoPor": "{{userCompradorId}}"
+}
+
+###
+
+### Paso 4: Agregar Item a Solicitud (copiar IDs)
+POST {{baseUrl}}/solicitudes-compra/{{solicitudId}}/items
+Content-Type: {{contentType}}
+
+{
+  "insumoId": "{{insumoId1}}",
+  "cantidad": 500
+}
+
+###
+
+### Paso 5: Crear Orden de Compra (copiar IDs)
+POST {{baseUrl}}/ordenes-compra
+Content-Type: {{contentType}}
+
+{
+  "proveedorId": "{{proveedorId}}",
+  "solicitudId": "{{solicitudId}}",
+  "fecha": "2025-11-22T14:00:00Z",
+  "estado": "PENDIENTE"
+}
+
+###
+
+### Paso 6: Agregar Item a Orden (copiar IDs)
+POST {{baseUrl}}/ordenes-compra/{{ordenId}}/items
+Content-Type: {{contentType}}
+
+{
+  "insumoId": "{{insumoId1}}",
+  "cantidad": 500,
+  "precioUnitario": 5.50
+}
+
+###
+
+### Paso 7: Crear Recepción (copiar IDs)
+POST {{baseUrl}}/recepciones
+Content-Type: {{contentType}}
+
+{
+  "ordenId": "{{ordenId}}",
+  "fecha": "2025-11-25T11:00:00Z",
+  "responsable": "{{userAdminId}}"
+}
+
+###
+
+### Paso 8: Agregar Detalle a Recepción (copiar IDs)
+POST {{baseUrl}}/recepciones/{{recepcionId}}/detalles
+Content-Type: {{contentType}}
+
+{
+  "insumoId": "{{insumoId1}}",
+  "cantidadRecibida": 500
+}
+
+###
+
+### Paso 9: Verificar Stock Actualizado
+GET {{baseUrl}}/insumos/{{insumoId1}}
+
+###
+
+---
+
+### ===============================================
+### SECCIÓN: CASOS DE ERROR Y VALIDACIÓN
+### ===============================================
+
+### ERROR M1.1: Crear cita con fecha pasada (DEBE FALLAR)
+POST {{baseUrl}}/citas
+Content-Type: {{contentType}}
+
+{
+  "fecha": "2020-12-20T14:30:00Z",
+  "motivo": "Consulta antigua",
+  "pacienteId": "{{pacienteId}}",
+  "medicoId": "{{medicoId}}"
+}
+
+###
+
+### ERROR M1.2: Crear atención con cita no existente (DEBE FALLAR)
+POST {{baseUrl}}/atenciones
+Content-Type: {{contentType}}
+
+{
+  "citaId": "00000000-0000-0000-0000-000000000000",
+  "diagnostico": "Test error",
+  "fecha": "2025-11-26T10:30:00Z"
+}
+
+###
+
+### ERROR M2.1: Crear orden sin items (DEBE FALLAR)
+POST {{baseUrl}}/ordenes-compra
+Content-Type: {{contentType}}
+
+{
+  "proveedorId": "{{proveedorId}}",
+  "solicitudId": "{{solicitudId}}",
+  "fecha": "2025-11-22T14:00:00Z"
+}
+
+###
+
+### ERROR M2.2: Crear recepción con cantidad mayor al pedido (DEBE FALLAR)
+POST {{baseUrl}}/recepciones/{{recepcionId}}/detalles
+Content-Type: {{contentType}}
+
+{
+  "insumoId": "{{insumoId1}}",
+  "cantidadRecibida": 1000
+}
+
+###
+
+---
+
+### ===============================================
+### INSTRUCCIONES DE USO
+### ===============================================
+
+### ORDEN RECOMENDADO DE EJECUCIÓN:
+
+### 1. CREAR DATOS BASE (M4 - Inventario):
+###    - M4.1.1: Crear insumo 1 (Alcohol) → copiar ID a @insumoId1
+###    - M4.1.2: Crear insumo 2 (Jeringa) → copiar ID a @insumoId2
+###    - M4.1.3: Crear insumo 3 (Pastilla) → copiar ID a @insumoId3
+
+### 2. PROBAR FLUJO M1 COMPLETO (Servicios de Salud):
+###    - M1.1.1: Crear paciente → copiar ID a @pacienteId
+###    - M1.2.1: Crear médico → copiar ID a @medicoId
+###    - M1.3.1: Crear cita → copiar ID a @citaId
+###    - M1.4.1: Crear atención → copiar ID a @atencionId
+###    - M1.5.1: Crear procedimiento → copiar ID a @procedimientoId
+
+### 3. PROBAR FLUJO M2 COMPLETO (Compras):
+###    - M2.1.1: Crear proveedor → copiar ID a @proveedorId
+###    - M2.2.1: Crear solicitud → copiar ID a @solicitudId
+###    - M2.3.1: Agregar item a solicitud
+###    - M2.4.1: Crear orden → copiar ID a @ordenId
+###    - M2.5.1: Agregar item a orden
+###    - M2.6.1: Crear recepción → copiar ID a @recepcionId
+###    - M2.7.1: Agregar detalle a recepción
+
+### 4. VERIFICAR RESULTADOS:
+###    - M2.6.2: Listar recepciones
+###    - M4.1.4: Listar insumos (verificar stock actualizado)
+
+### NOTA: Actualiza manualmente las variables (@ID) con los valores del ID devuelto
+### en cada respuesta para encadenar las peticiones.

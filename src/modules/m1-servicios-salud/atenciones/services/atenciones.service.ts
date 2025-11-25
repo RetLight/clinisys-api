@@ -65,7 +65,7 @@ export class AtencionesService {
       data: {
         cita_id: dto.citaId,
         diagnostico: dto.diagnostico ?? '',
-        observaciones: dto.observaciones ?? {},
+        observaciones: dto.observaciones ?? ({} as never),
         fecha: fechaAtencion,
       },
       include: { cita: true },
@@ -123,8 +123,9 @@ export class AtencionesService {
       throw new NotFoundException('Atención médica no encontrada.');
     }
 
-    const nuevaFecha =
-      dto.fecha ? new Date(dto.fecha) : new Date(atencion.fecha);
+    const nuevaFecha = dto.fecha
+      ? new Date(dto.fecha)
+      : new Date(atencion.fecha);
 
     // Validar fecha respecto a la cita asociada
     this.ensureFechaValida(nuevaFecha, atencion.cita.fecha);
@@ -134,7 +135,7 @@ export class AtencionesService {
       data: {
         fecha: nuevaFecha,
         diagnostico: dto.diagnostico ?? atencion.diagnostico,
-        observaciones: dto.observaciones ?? atencion.observaciones,
+        observaciones: dto.observaciones ?? (atencion.observaciones as never),
       },
       include: {
         cita: {

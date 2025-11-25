@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Param, Body, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { ProcedimientosService } from '../services/procedimientos.service';
 import { CreateProcedimientoDto } from '../dto/create-procedimiento.dto';
 import { UpdateProcedimientoDto } from '../dto/update-procedimiento.dto';

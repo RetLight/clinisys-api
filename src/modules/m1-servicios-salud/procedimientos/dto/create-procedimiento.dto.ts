@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsInt, Min, IsOptional } from 'class-validator';
+import { IsUUID, IsString, IsInt, Min } from 'class-validator';
 
 export class CreateProcedimientoDto {
   @IsUUID()

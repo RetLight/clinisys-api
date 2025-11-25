@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/shared/infrastructure/prisma/prisma.service';
 import { CreateProcedimientoDto } from '../dto/create-procedimiento.dto';
 import { UpdateProcedimientoDto } from '../dto/update-procedimiento.dto';
@@ -15,7 +19,7 @@ export class ProcedimientosService {
   private async ensureAtencionExiste(atencionId: string) {
     const atencion = await this.prisma.atencionMedica.findUnique({
       where: { id: atencionId },
-      include: { cita: true }
+      include: { cita: true },
     });
 
     if (!atencion) {
@@ -45,13 +49,19 @@ export class ProcedimientosService {
     const atencion = await this.ensureAtencionExiste(dto.atencionId);
     const insumo = await this.ensureInsumoExiste(dto.insumoId);
 
-    if (!ProcedimientosRules.validarStockDisponible(insumo.stock_actual, dto.cantidad)) {
-      throw new BadRequestException('Stock insuficiente para registrar el procedimiento.');
+    if (
+      !ProcedimientosRules.validarStockDisponible(
+        insumo.stock_actual,
+        dto.cantidad,
+      )
+    ) {
+      throw new BadRequestException(
+        'Stock insuficiente para registrar el procedimiento.',
+      );
     }
 
     // Transacción: registrar procedimiento + movimiento + consumo
     return this.prisma.$transaction(async (tx) => {
-
       // 1. Registrar el procedimiento
       const procedimiento = await tx.procedimiento.create({
         data: {
@@ -142,7 +152,9 @@ export class ProcedimientosService {
   }
 
   async remove(id: string) {
-    const procedimiento = await this.prisma.procedimiento.findUnique({ where: { id } });
+    const procedimiento = await this.prisma.procedimiento.findUnique({
+      where: { id },
+    });
 
     if (!procedimiento) {
       throw new NotFoundException('Procedimiento no encontrado.');

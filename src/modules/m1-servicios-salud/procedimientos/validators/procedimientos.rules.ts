@@ -1,5 +1,8 @@
 export class ProcedimientosRules {
-  static validarStockDisponible(stockActual: number, cantidad: number): boolean {
+  static validarStockDisponible(
+    stockActual: number,
+    cantidad: number,
+  ): boolean {
     return stockActual >= cantidad;
   }
 }
